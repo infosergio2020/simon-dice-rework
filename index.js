@@ -1,3 +1,5 @@
+
+    // DECLARACION DE ELEMENTOS DEL JUEGO
     const celeste = document.getElementById('celeste')
     const violeta = document.getElementById('violeta')
     const naranja = document.getElementById('naranja')
@@ -5,13 +7,13 @@
     const btnEmpezar = document.getElementById('btnEmpezar')
     const ULTIMO_NIVEL = 10
 
+    //ver NOTA:1 al pie de pagina
     class Juego {
             constructor() {
                 this.inicializar = this.inicializar.bind(this)
                 this.inicializar()
                 this.generarSecuencia()
                 setTimeout(this.siguienteNivel, 500)
-            
             }
 
         inicializar() {
@@ -27,6 +29,7 @@
             }
         }
 
+        // ver NOTA 2
         toggleBtnEmpezar(){
             if (btnEmpezar.classList.contains('hide')) {
                 btnEmpezar.classList.remove('hide')
@@ -35,6 +38,7 @@
             }
         }
 
+        // ver NOTA 3
         generarSecuencia() {
             this.secuencia = new Array(ULTIMO_NIVEL).fill(0).map(n => Math.floor(Math.random() * 4))
         }
@@ -59,18 +63,6 @@
             }
         }
 
-        transformarColorANumero(color){
-            switch (color) {
-                case 'celeste':
-                    return 0
-                case 'violeta': 
-                    return 1
-                case 'naranja':
-                    return 2
-                case 'verde':
-                    return 3
-            }
-        }
 
         iluminarSecuencia(){
             for (let i = 0; i < this.nivel; i++) {
@@ -104,22 +96,26 @@
 
         elegirColor(ev) {
             const nombreColor = ev.target.dataset.color
-            const numeroColor = this.transformarColorANumero(nombreColor)
             this.iluminarColor(nombreColor)
-            if(numeroColor === this.secuencia[this.subnivel]){
+            const nombreSecuenciaActualColor = this.colores[this.transformarNumeroAColor(this.secuencia[this.subnivel])].dataset.color;
+            if(nombreColor === nombreSecuenciaActualColor){
                 this.subnivel++
                 if(this.subnivel === this.nivel) {
-                this.nivel++
-                this.eliminarEventosClick()
-                if (this.nivel === (ULTIMO_NIVEL + 1)){
-                    this.ganoElJuego()
-                } else {
-                    setTimeout(this.siguienteNivel, 1500)
-                    } 
+                    this.nivel++
+                    this.eliminarEventosClick()
+                    this.continuarOGanaste(this.nivel)
                 }
             } else {
                 this.perdioElJuego()
             }
+        }
+
+        continuarOGanaste(nivel){
+            if (nivel === (ULTIMO_NIVEL + 1)){
+                this.ganoElJuego()
+            } else {
+                setTimeout(this.siguienteNivel, 1500)
+                } 
         }
 
         ganoElJuego() {
@@ -140,3 +136,17 @@
     function empezarJuego() {
         window.juego = new Juego()
     }
+
+
+
+// NOTA 1: 
+//para no perder la referencia con las propiedades de la clase Juego
+//se realiza un .bind(this) de esta forma no se hara referencia a las propiedades globales
+
+// NOTA 2:
+// necesito visualizar el boton la primera vez que un usuairo ingrese al juego
+// la posibilidad de comenzar con el juego, utilizaré la clase hide para poder 
+
+// NOTA 3:
+// voy a generar una secuencia de 10 numero aleatorios entre 0 y 4
+// Math.floor(Math.random() * 4)
